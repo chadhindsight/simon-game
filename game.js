@@ -18,10 +18,13 @@ function nextSequence() {
 
     $(`#${randomChosenColor}`).fadeIn(100).fadeOut(100).fadeIn(100);
 
-    var audio = new Audio(`sounds/${randomChosenColor}.mp3`);
-    audio.play();
+    playSound(randomChosenColor);
     
 }
 
+function playSound(name) {
+    let audio = new Audio(`sounds/${randomChosenColor}.mp3`);
+    audio.play();
 
+}
 
