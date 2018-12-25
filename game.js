@@ -1,44 +1,86 @@
-const buttonColors = ["red", "blue", "green", "yellow"];
+
+const buttonColours = ["red", "blue", "green", "yellow"];
+
 let gamePattern = [];
 let userClickedPattern = [];
 
-//You'll need a way to keep track of whether if the game has started or not, so you only call nextSequence() on the first keypress.
-var started = false;
+const wrong = new Audio('sounds/wrong.mp3')
 
+let started = false;
 let level = 0;
 
-$(document).keypress(function(){
-    if(started) {
-        $("#level-title").text(`"Level "${level}`);
+$(document).keypress(function () {
+    if (!started) {
+        $("#level-title").text("Level " + level);
         nextSequence();
         started = true;
     }
-})
+});
 
-// Use jQuery to detect when any of the buttons are clicked and trigger a handler function.
-$('btn').click(function(){
-    let userChosenColor = $(this).attr('id');
-    userClickedPattern.push(userChosenColor);
+$(".btn").click(function () {
 
-    playSound(userChosenColor);
-    animatePress(userChosenColor);
-})
+    var userChosenColour = $(this).attr("id");
+    userClickedPattern.push(userChosenColour);
+
+    playSound(userChosenColour);
+    animatePress(userChosenColour);
+
+    //2. Call checkAnswer() after a user has clicked and chosen their answer, passing in the index of the last answer in the user's sequence.
+    checkAnswer(userClickedPattern.length - 1);
+});
+
+
+//1. Create a new function called checkAnswer(), it should take one input with the name currentLevel
+function checkAnswer(currentLevel) {
+
+    //3. Write an if statement inside checkAnswer() to check if the most recent user answer is the same as the game pattern. If so then log "success", otherwise log "wrong".
+    if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+
+        console.log("success");
+
+        //4. If the user got the most recent answer right in step 3, then check that they have finished their sequence with another if statement.
+        if (userClickedPattern.length === gamePattern.length) {
+
+            //5. Call nextSequence() after a 1000 millisecond delay.
+            setTimeout(function () {
+                nextSequence();
+            }, 1000);
+
+        }
+
+    } else {
+        playSound("wrong");
+        $("#level-title").text('Game Over, Press Any Key to Restart')
+        $('body').addClass('game-over')
+
+        setTimeout(() => {
+            $('body').removeClass('game-over')
+        }, 200);
+        console.log("wrong");
+
+    }
+
+}
 
 function nextSequence() {
-    let randomNumber = Math.round(Math.random() * 4);
-    //Create a new variable called randomChosenColor and use the randomNumber from step 2 to select a random color from the buttonColours array.
-    let randomChosenColor = buttonColors[randomNumber]
-    // Push it to gamePattern array
-    gamePattern.push(randomChosenColor)
 
-    $(`#${randomChosenColor}`).fadeIn(100).fadeOut(100).fadeIn(100);
-    
+    //6. Once nextSequence() is triggered, reset the userClickedPattern to an empty array ready for the next level.
+    userClickedPattern = [];
+
+    level++;
+    $("#level-title").text("Level " + level);
+
+    var randomNumber = Math.floor(Math.random() * 4);
+    let randomChosenColour = buttonColours[randomNumber];
+    gamePattern.push(randomChosenColour);
+
+    $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100);
+    playSound(randomChosenColour);
 }
 
 function playSound(name) {
-    let audio = new Audio(`sounds/${name}.mp3`);
+    let audio = new Audio("sounds/" + name + ".mp3");
     audio.play();
-
 }
 
 function animatePress(currentColor) {
