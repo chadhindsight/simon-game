@@ -41,7 +41,6 @@ function checkAnswer(currentLevel) {
         //4. If the user got the most recent answer right in step 3, then check that they have finished their sequence with another if statement.
         if (userClickedPattern.length === gamePattern.length) {
 
-            //5. Call nextSequence() after a 1000 millisecond delay.
             setTimeout(function () {
                 nextSequence();
             }, 1000);
@@ -57,7 +56,11 @@ function checkAnswer(currentLevel) {
             $('body').removeClass('game-over')
         }, 200);
         console.log("wrong");
-
+        
+        // Rest the game
+        $('body').keypress( function(){
+            startOver();
+        })
     }
 
 }
@@ -88,4 +91,10 @@ function animatePress(currentColor) {
     setTimeout(function () {
         $("#" + currentColor).removeClass("pressed");
     }, 100);
+}
+
+function startOver() {
+    started = false;
+    gamePattern = [];
+    level = 0;
 }
